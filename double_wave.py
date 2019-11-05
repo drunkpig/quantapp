@@ -1,5 +1,3 @@
-import sys
-
 from fearquantlib.wavelib import *
 
 config = QuantConfig()
@@ -12,23 +10,22 @@ def __compute_score_table(codes, time_delta):
 
     all_info = []
     for code in codes:
-        info = {"名称":code}
+        info = {"名称": code}
         for k in config.periods:
             fname = df_file_name(code, K_LINE_TYPE[k])
             df = pd.read_csv(fname, index_col=0)
-            if k==KL_Period.KL_60:
-                is_g_bar_reduce =  is_macd_bar_reduce(df, "macd_bar")
+            if k == KL_Period.KL_60:
+                is_g_bar_reduce, green_start_time_key = is_macd_bar_reduce(df, "macd_bar", max_reduce_bar_distance=3)
                 info['时间'] = df.tail(1).iat[0, 1]
-                info['60分缩短'] = "是" if is_g_bar_reduce  else "否"
+                info['60分缩短'] = "是" if is_g_bar_reduce else "否"
             macd_wv_cnt = bar_green_wave_cnt(df, "macd_bar")
             ma_cnt = bar_green_wave_cnt(df, "em_bar")
             divergence_cnt = bottom_divergence_cnt(df, "macd_bar", "close")
-            info[k] = { "macd波浪数":macd_wv_cnt, "均线波浪数":ma_cnt, "macd底背次数":divergence_cnt}
+            info[k] = {"macd波浪数": macd_wv_cnt, "均线波浪数": ma_cnt, "macd底背次数": divergence_cnt}
 
         all_info.append(info)
 
     print(json.dumps(all_info, indent=4, sort_keys=True, ensure_ascii=False))
-
 
 
 def __wave_cnt(df):
@@ -36,8 +33,6 @@ def __wave_cnt(df):
     macd, ma的各周期波数目  # TODO 波数目的计算还存在一定问题，小周期的波数目应该从大周期绿波开始点算起
     :return:
     """
-
-
 
 
 def __bottom_divergence_cnt(df):

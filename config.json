@@ -23,6 +23,10 @@
       "wave_scan_max_gap": 3,
       "moutain_min_width": 5
     }
+  },
+
+  "schedule":{
+     "双峰共振": {"file": "double_wave.py", "triger":"30  10,11,13,14  * * *", "args":{}}
   }
 
 }
