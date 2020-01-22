@@ -1,3 +1,7 @@
 fear-quant-lib==0.0.2
 flask
 apscheduler==3.5.1
+lxml
+soup
+psutil
+apscheduler

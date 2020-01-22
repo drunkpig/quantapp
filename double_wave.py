@@ -4,7 +4,7 @@ config = QuantConfig()
 
 
 def __compute_score_table(codes, time_delta):
-    is_ok = prepare_csv_data(codes, n_days=30, start_date="2019-07-01", end_date="2019-08-07",
+    is_ok = prepare_csv_data_tdx(codes, n_days=30, start_date="2019-07-01", end_date="2019-08-07",
                              timeUnitDelta=time_delta * timeConvTable['KL_60'])  # 如果让他返回落盘文件位置的从大周期到小周期的一个path list
     if is_ok is None:
         print("获取数据错误")
@@ -16,7 +16,7 @@ def __compute_score_table(codes, time_delta):
         info = {"stock_code": code}
         green_start_time_key = None
         for k in config.periods:
-            fname = df_file_name(code, K_LINE_TYPE[k])
+            fname = df_file_name(code, k)
             df = pd.read_csv(fname, index_col=0)
             if k == KL_Period.KL_60:
                 is_g_bar_reduce, green_start_time_key = is_macd_bar_reduce(df, "macd_bar", max_reduce_bar_distance=3)
@@ -33,9 +33,9 @@ def __compute_score_table(codes, time_delta):
             info.update({f"{k}_macd_wave_cnt": macd_wv_cnt, f"{k}_ema_wave_cnt": ma_cnt,
                          f"{k}_macd_bottom_divergence_cnt": divergence_cnt, f"{k}_em_5_10_distance": ma_distance})
 
-        df60 = pd.read_csv(df_file_name(code, K_LINE_TYPE[KL_Period.KL_60]), index_col=0)
-        df30 = pd.read_csv(df_file_name(code, K_LINE_TYPE[KL_Period.KL_30]), index_col=0)
-        df15 = pd.read_csv(df_file_name(code, K_LINE_TYPE[KL_Period.KL_15]), index_col=0)
+        df60 = pd.read_csv(df_file_name(code, KL_Period.KL_60), index_col=0)
+        df30 = pd.read_csv(df_file_name(code, KL_Period.KL_30), index_col=0)
+        df15 = pd.read_csv(df_file_name(code, KL_Period.KL_15), index_col=0)
         # 60~30, 60~15 macd共振
         # 30~15 macd共振
         macd_60_30 = resonance_cnt(df60, df30, "macd_bar", start_time_key=green_start_time_key)
