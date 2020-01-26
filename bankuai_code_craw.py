@@ -32,6 +32,12 @@ def __parse(url):
     """
     result = []
     ctx = requests.get(url, headers=header)
+    retry_cnt = 0
+    while ctx.status_code!=200 and retry_cnt<=3:
+        time.sleep(5)
+        ctx = requests.get(url, headers=header)
+        retry_cnt += 1
+
     soup = BeautifulSoup(ctx.text, 'lxml')
     trs = soup.find_all("tr")
     trs = trs[1:]
